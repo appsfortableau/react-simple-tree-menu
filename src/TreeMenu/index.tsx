@@ -1,7 +1,7 @@
 import React from 'react';
 import debounce from 'tiny-debounce';
 
-import  {
+import {
   fastWalk,
   slowWalk,
   TreeNode,
@@ -17,6 +17,7 @@ export type TreeMenuProps = {
   data: { [name: string]: TreeNode } | TreeNodeInArray[];
   activeKey?: string;
   focusKey?: string;
+  keySeparator: string;
   initialActiveKey?: string;
   initialFocusKey?: string;
   initialOpenNodes?: string[];
@@ -48,9 +49,10 @@ class TreeMenu extends React.Component<TreeMenuProps, TreeMenuState> {
     debounceTime: 125,
     children: defaultChildren,
     hasSearch: true,
-    cacheSearch:true,
+    cacheSearch: true,
     resetOpenNodesOnDataUpdate: false,
     disableKeyboard: false,
+    keySeparator: '/',
   };
 
   state: TreeMenuState = {
@@ -71,7 +73,12 @@ class TreeMenu extends React.Component<TreeMenuProps, TreeMenuState> {
     const { initialOpenNodes } = this.props;
     const openNodes =
       (Array.isArray(newOpenNodes) && newOpenNodes) || initialOpenNodes || [];
-    this.setState({ openNodes, searchTerm: '', activeKey: activeKey || '', focusKey: focusKey || activeKey || '' });
+    this.setState({
+      openNodes,
+      searchTerm: '',
+      activeKey: activeKey || '',
+      focusKey: focusKey || activeKey || '',
+    });
   };
 
   search = (value: string) => {
@@ -94,14 +101,14 @@ class TreeMenu extends React.Component<TreeMenuProps, TreeMenuState> {
   };
 
   generateItems = (): TreeMenuItem[] => {
-    const { data, onClickItem, locale, matchSearch } = this.props;
+    const { data, onClickItem, locale, matchSearch, keySeparator } = this.props;
     const { searchTerm } = this.state;
     const openNodes = this.props.openNodes || this.state.openNodes;
     const activeKey = this.props.activeKey || this.state.activeKey;
     const focusKey = this.props.focusKey || this.state.focusKey;
     const defaultSearch = this.props.cacheSearch ? fastWalk : slowWalk;
     const items: Item[] = data
-      ? defaultSearch({ data, openNodes, searchTerm, locale, matchSearch })
+      ? defaultSearch({ data, openNodes, searchTerm, locale, matchSearch, keySeparator })
       : [];
 
     return items.map(item => {
@@ -121,13 +128,13 @@ class TreeMenu extends React.Component<TreeMenuProps, TreeMenuState> {
   getKeyDownProps = (items: TreeMenuItem[]) => {
     const { onClickItem } = this.props;
     const { focusKey, activeKey, searchTerm } = this.state;
-    
+
     const focusIndex = items.findIndex(item => item.key === (focusKey || activeKey));
     const getFocusKey = (item: TreeMenuItem) => {
-      const keyArray = item.key.split('/');
+      const keyArray = item.key.split(this.props.keySeparator);
 
       return keyArray.length > 1
-        ? keyArray.slice(0, keyArray.length - 1).join('/')
+        ? keyArray.slice(0, keyArray.length - 1).join(this.props.keySeparator)
         : item.key;
     };
 

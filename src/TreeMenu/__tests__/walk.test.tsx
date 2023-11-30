@@ -1,4 +1,4 @@
-import {slowWalk,fastWalk, TreeNode, TreeNodeObject, TreeNodeInArray } from '../walk';
+import { slowWalk, fastWalk, TreeNode, TreeNodeObject, TreeNodeInArray } from '../walk';
 
 const mockDataInObject: TreeNodeObject = {
   atd: {
@@ -75,6 +75,7 @@ const expectedOutcome = [
     index: 0,
     isOpen: true,
     key: 'releasenotes/desktop-modeler/7',
+    keySeparator: '/',
     url: 'releasenotes/desktop-modeler/7',
     label: '7',
     level: 2,
@@ -87,6 +88,7 @@ const expectedOutcome = [
     index: 0,
     isOpen: false,
     key: 'releasenotes/desktop-modeler/7/7.0',
+    keySeparator: '/',
     url: 'releasenotes/desktop-modeler/7.0',
     label: '7.0',
     level: 3,
